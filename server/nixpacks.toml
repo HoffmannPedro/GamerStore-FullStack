@@ -1,0 +1,13 @@
+# nixpacks.toml
+
+[phases.setup]
+# Aquí le decimos explícitamente que queremos Java 21
+nixPkgs = ["jdk21", "maven"]
+
+[phases.build]
+# El comando para compilar (saltando los tests para que sea más rápido y no falle por tonterías)
+cmds = ["mvn clean install -DskipTests"]
+
+[start]
+# El comando para arrancar el servidor
+cmd = "java -jar target/*.jar"
