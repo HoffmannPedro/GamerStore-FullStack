@@ -1,0 +1,34 @@
+# --- JAVA / SPRING BOOT ---
+target/
+*.class
+.mvn/
+mvnw
+mvnw.cmd
+.classpath
+.project
+.settings/
+*.iml
+
+# --- IDEs (VS Code, IntelliJ, Eclipse) ---
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- NODE / REACT (Frontend) ---
+node_modules/
+**/node_modules/
+dist/
+build/
+.DS_Store
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- VARIABLES DE ENTORNO (Seguridad) ---
+.env
+.env.local
+*.properties
+!application.properties 
+# (Ojo: Mantén application.properties si tiene datos públicos, 
+# pero si tienes contraseñas reales de BD, agrégalo aquí también).
