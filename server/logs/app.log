@@ -8956,3 +8956,9 @@ org.postgresql.util.PSQLException: ERROR: no existe la función lower(bytea)
 2025-11-13T19:22:48.875-03:00  INFO 18420 --- [http-nio-8080-exec-2] c.e.template.service.ProductService      : Obteniendo todos los productos, total: 9
 2025-11-13T19:22:51.734-03:00  INFO 18420 --- [http-nio-8080-exec-4] c.e.template.service.ProductService      : Obteniendo todos los productos, total: 9
 2025-11-13T19:23:11.283-03:00  INFO 18420 --- [http-nio-8080-exec-6] c.e.template.service.ProductService      : Obteniendo todos los productos, total: 9
+2025-11-13T20:10:03.984-03:00  INFO 18420 --- [http-nio-8080-exec-9] c.e.template.service.CategoryService     : Obteniendo todas las categorías
+2025-11-13T20:10:04.015-03:00  INFO 18420 --- [http-nio-8080-exec-10] c.e.template.service.CategoryService     : Obteniendo todas las categorías
+2025-11-13T20:10:04.592-03:00  INFO 18420 --- [http-nio-8080-exec-2] c.e.template.service.ProductService      : Obteniendo todos los productos, total: 9
+2025-11-13T20:14:39.887-03:00  INFO 18420 --- [http-nio-8080-exec-4] c.e.template.service.CategoryService     : Obteniendo todas las categorías
+2025-11-13T20:14:39.923-03:00  INFO 18420 --- [http-nio-8080-exec-5] c.e.template.service.CategoryService     : Obteniendo todas las categorías
+2025-11-13T20:14:40.601-03:00  INFO 18420 --- [http-nio-8080-exec-7] c.e.template.service.ProductService      : Obteniendo todos los productos, total: 9
