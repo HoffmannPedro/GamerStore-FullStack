@@ -32,3 +32,6 @@ yarn-error.log*
 !application.properties 
 # (Ojo: Mantén application.properties si tiene datos públicos, 
 # pero si tienes contraseñas reales de BD, agrégalo aquí también).
+
+*.log
+logs/

@@ -1,35 +1,160 @@
-# Ecommerce Template
+# 🎮 GamerStore - Full Stack E-commerce
 
-Template modular para ecommerce con React + Tailwind v4 (frontend), Spring Boot + JPA (backend), PostgreSQL (DB).
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![TailwindCSS](https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-## Template Base
-- Rama: template-base
-- Estado: Listado de productos (cards Tailwind), carrito con agregar/remover/remover-uno/total (tabla Tailwind), persistencia en DB.
-- Reutilización: Clona `template-base`. Ajusta DB, copia `CartContext`, entidades `Cart`/`CartItem`, usa Tailwind para estilos.
+GamerStore es una plataforma de comercio electrónico robusta y escalable
+diseñada para la venta de hardware y periféricos gaming. Implementa una
+arquitectura Full Stack moderna con seguridad JWT, filtrado en servidor
+y diseño completamente responsivo (en proceso).
 
-## Prerrequisitos
-- Node.js 20+ (frontend)
-- JDK 21 (backend)
-- PostgreSQL 17 (crea DB `ecommerce_db`)
+🔗 **Demo en Vivo:**\
+https://gamerstore-fullstack-production.up.railway.app
 
-## Setup
-1. Clona: `git clone <url> .`
-2. Frontend: `cd client && npm install && npm run dev` (localhost:5173)
-3. Backend: Edita `server/src/main/resources/application.properties` (DB password), luego `cd server && ./mvnw spring-boot:run` (localhost:8080)
+------------------------------------------------------------------------
 
-## Modelos de Datos
-- Entidades: `Category` (id, name), `Product` (id, name, price, category_id).
-- Relación: 1:N (una categoría, muchos productos).
-- JPA: Tablas creadas automáticamente (`spring.jpa.hibernate.ddl-auto=update`).
+## 📸 Preview
 
-## Troubleshooting
-- Frontend: Si Tailwind no aplica, verifica `index.css` en `main.jsx` y `@tailwindcss/postcss` en `postcss.config.js`.
-- Backend: Si falla, verifica Postgres (`psql -U postgres -d ecommerce_db`) y usa `./mvnw spring-boot:run -e -X`.
+![Home Page](./client/public/img/screenshot-home.png)
 
-## Reutilización
-- Clona repo.
-- Ajusta DB en `application.properties`.
-- Personaliza Tailwind en `tailwind.config.js` (opcional).
-- Expande entidades en `com.example.demo.model`.
+------------------------------------------------------------------------
 
-Basado en arquitectura en capas: UI (React), lógica (Spring), datos (JPA/Postgres).
+## 📂 Estructura del Proyecto
+
+    GamerStore-FullStack/
+    ├── client/
+    │   ├── public/img/
+    │   ├── src/
+    │   │   ├── components/
+    │   │   ├── contexts/
+    │   │   ├── pages/
+    │   │   └── services/
+    │   └── package.json
+    │
+    ├── server/
+    │   ├── src/main/java/com/ecommerce/template/
+    │   │   ├── config/
+    │   │   ├── controller/
+    │   │   ├── dto/
+    │   │   ├── model/
+    │   │   ├── repository/
+    │   │   ├── security/
+    │   │   └── service/
+    │   ├── Dockerfile
+    │   └── pom.xml
+    │
+    └── README.md
+
+------------------------------------------------------------------------
+
+## 🚀 Tecnologías
+
+### Backend
+
+-   Java 21
+-   Spring Boot 3
+-   Spring Security 6
+-   JPA/Hibernate
+
+### Frontend
+
+-   React 18
+-   Vite
+-   Tailwind CSS
+-   Context API
+
+### Base de Datos
+
+-   PostgreSQL 12+
+
+### Infraestructura
+
+-   Docker
+-   Railway CI/CD
+
+### Seguridad
+
+-   JWT (HS512)
+-   BCrypt para contraseñas
+
+------------------------------------------------------------------------
+
+## ⚙️ Configuración y Variables de Entorno
+
+### Backend (Spring Boot)
+
+  Variable                     Descripción
+  ---------------------------- -------------
+  SPRING_DATASOURCE_URL        URL JDBC
+  SPRING_DATASOURCE_USERNAME   Usuario
+  SPRING_DATASOURCE_PASSWORD   Contraseña
+  PORT                         Puerto
+
+> La clave JWT se autogenera en cada inicio.
+
+------------------------------------------------------------------------
+
+### Frontend (React)
+
+Crear archivo `.env`:
+
+    VITE_API_URL=http://localhost:8080/api
+
+------------------------------------------------------------------------
+
+## 🛠️ Instalación Local
+
+### Prerrequisitos
+
+-   Java 21\
+-   Node.js 20+\
+-   PostgreSQL
+
+------------------------------------------------------------------------
+
+### 1. Clonar repositorio
+
+``` bash
+git clone https://github.com/HoffmannPedro/GamerStore-FullStack.git
+cd GamerStore-FullStack
+```
+
+### 2. Iniciar Backend
+
+``` bash
+cd server
+./mvnw spring-boot:run
+```
+
+### 3. Iniciar Frontend
+
+``` bash
+cd ../client
+npm install
+npm run dev
+```
+
+------------------------------------------------------------------------
+
+## 📡 API Endpoints Principales
+
+  Método   Endpoint             Acceso    Descripción
+  -------- -------------------- --------- -------------------
+  POST     /api/auth/register   Público   Registrar usuario
+  POST     /api/auth/login      Público   Login + token
+  GET      /api/products        Público   Listar productos
+  POST     /api/products        Auth      Crear producto
+  GET      /api/cart            Auth      Ver carrito
+  POST     /api/cart/items      Auth      Agregar item
+
+------------------------------------------------------------------------
+
+## 👤 Autor
+
+**Pedro Hoffmann**\
+GitHub: https://github.com/HoffmannPedro\
+LinkedIn: Pedro Hoffmann
