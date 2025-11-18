@@ -35,7 +35,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("http://localhost:5173"));
+
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "https://spectacular-miracle-production.up.railway.app"
+        ));
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
@@ -53,16 +58,25 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // 1. AUTENTICACIÓN: Pública (Obvio)
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/products/**").permitAll()
+
+                        // 2. PRODUCTOS Y CATEGORÍAS:
+                        // Ver (GET) es público. Crear/Borrar (POST/DELETE) requiere login.
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/cart").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/products/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/cart/items").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/cart").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/cart/clear").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/cart/items/**").permitAll()
+
+                        // Ojo: Si quieres que SOLO admins creen productos, aquí iría .hasRole("ADMIN")
+                        // Por ahora, dejémoslo en .authenticated() para que al menos requiera login.
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()
+
+                        // 3. CARRITO: ¡SIEMPRE PROTEGIDO! 🔒
+                        // Necesitas el token para saber qué usuario está comprando.
+                        .requestMatchers("/api/cart/**").authenticated()
+
+                        // 4. Cualquier otra cosa: Cerrada.
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
