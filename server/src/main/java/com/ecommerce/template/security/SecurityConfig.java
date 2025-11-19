@@ -68,10 +68,10 @@ public class SecurityConfig {
 
                         // Ojo: Si quieres que SOLO admins creen productos, aquí iría .hasRole("ADMIN")
                         // Por ahora lo dejamos en .authenticated() para que al menos requiera login.
-                        .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
 
                         // 3. CARRITO: ¡SIEMPRE PROTEGIDO! 🔒
                         // Necesitas el token para saber qué usuario está comprando.

@@ -30,6 +30,9 @@ public class AuthService {
             throw new RuntimeException("El usuario ya existe: " + username);
         }
         User user = new User(username, passwordEncoder.encode(password));
+
+        user.setRole("USER"); // Asigna rol por defecto.
+
         userRepository.save(user);
         return jwtUtil.generateToken(username);
     }

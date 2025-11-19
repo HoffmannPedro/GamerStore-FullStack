@@ -3,10 +3,11 @@ package com.ecommerce.template.model;
 import jakarta.persistence.*;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -24,6 +25,8 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Cart cart;
+
+    private String role;
 
     public User() {}
     public User(String username, String password) {
@@ -60,10 +63,19 @@ public class User implements UserDetails {
         this.cart = cart;
     }
 
+    public String getRole() {
+        return role;
+    }
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     // UserDetails methods
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList();
+        // Spring Security espera que los roles empiecen con "ROLE_"
+        // Así que si en la base dice "ADMIN", acá devolvemos "ROLE_ADMIN"
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role));
     }
     @Override
     public boolean isAccountNonExpired() {
