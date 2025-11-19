@@ -56,6 +56,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('username');
         setUser(null);
         console.log("Sesión cerrada");
+        window.location.href = '/login'; 
     };
 
     // ESTÁ AUTENTICADO ?

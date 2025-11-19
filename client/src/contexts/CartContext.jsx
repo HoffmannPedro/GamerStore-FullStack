@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
 
@@ -8,10 +9,12 @@ export const CartProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const { isAuthenticated } = useAuth();
+
     // CARGAR CARRITO AL INICIAR
     useEffect(() => {
         const token = localStorage.getItem('token');
-        if (!token) {
+        if (!isAuthenticated()) {
             setCartItems([]);
             setLoading(false);
             return;
@@ -28,7 +31,7 @@ export const CartProvider = ({ children }) => {
             }
         };
         loadCart();
-    }, []);
+    }, [isAuthenticated]);
 
     // AGREGAR AL CARRITO
     const addToCart = async (product) => {

@@ -26,6 +26,7 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    //OBTENER PRODUCTOS
     public List<ProductDTO> getAllProducts( String name, Long categoryId, Boolean inStock, String sortOrder) {
         logger.info("Obteniendo todos los productos, total: {}", productRepository.findAll().size());
 
@@ -63,6 +64,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    // CREAR PRODUCTO
     public ProductDTO createProduct(ProductDTO productDTO) {
         try {
             logger.info("Creando producto: {}", productDTO.getName());
@@ -95,6 +97,7 @@ public class ProductService {
         }
     }
 
+    // BORRAR PRODUCTO
     public void deleteProduct(Long id) {
         try {
             logger.info("Eliminando productos con id {}", id);
@@ -107,4 +110,29 @@ public class ProductService {
             throw new RuntimeException("Error al eliminar producto: " + e.getMessage());
         }
     }
+
+    // ACTUALIZAR PRODUCTO
+    public ProductDTO updateProduct(Long id, ProductDTO productDTO) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID " + id));
+                
+                if (productDTO.getName() != null) product.setName(productDTO.getName());
+    if (productDTO.getPrice() != null) product.setPrice(productDTO.getPrice());
+    if (productDTO.getImageUrl() != null) product.setImageUrl(productDTO.getImageUrl());
+    
+    if (productDTO.getStock() != null) product.setStock(productDTO.getStock());
+
+    Product updatedProduct = productRepository.save(product);
+
+    return new ProductDTO(
+        updatedProduct.getId(),
+        updatedProduct.getName(),
+        updatedProduct.getPrice(),
+        updatedProduct.getStock(),
+        updatedProduct.getCategory() != null ? updatedProduct.getCategory().getName() : "Sin categoría",
+        updatedProduct.getCategory() != null ? updatedProduct.getCategory().getId() : null,
+        updatedProduct.getImageUrl()
+    );
+    }
+    
 }

@@ -156,7 +156,7 @@ function ProductList() {
                             <button
                                 onClick={() => handleAdd(product)}
                                 disabled={!isAuthenticated()}
-                                className={`w-full py-2 px-4 rounded ${isAuthenticated()
+                                className={`w-full py-2 px-4 rounded ${isAuthenticated() && product.stock != 0
                                     ? 'bg-btnGreen text-white hover:brightness-125'
                                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     }`}

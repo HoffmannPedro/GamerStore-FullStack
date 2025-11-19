@@ -67,10 +67,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
 
                         // Ojo: Si quieres que SOLO admins creen productos, aquí iría .hasRole("ADMIN")
-                        // Por ahora, dejémoslo en .authenticated() para que al menos requiera login.
+                        // Por ahora lo dejamos en .authenticated() para que al menos requiera login.
                         .requestMatchers(HttpMethod.POST, "/api/products/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/categories/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").authenticated()
 
                         // 3. CARRITO: ¡SIEMPRE PROTEGIDO! 🔒
                         // Necesitas el token para saber qué usuario está comprando.

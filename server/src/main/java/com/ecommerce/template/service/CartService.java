@@ -40,7 +40,6 @@ public class CartService {
     public CartDTO getCart() {
         try {
             User user = getCurrentUser();
-            System.out.println("AQUI");
             logger.info("Obteniendo carrito para el usuario: {}", user.getUsername());
             Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -82,6 +81,12 @@ public class CartService {
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
                 .orElse(null);
+
+            int currentQuantityInCart = (existingItem != null) ? existingItem.getQuantity() : 0;
+
+            if (currentQuantityInCart + quantity > product.getStock()) {
+                throw new RuntimeException("No hay suficiente stock. Stock disponible " + product.getStock());
+            }
             
             if (existingItem != null) {
                 existingItem.setQuantity(existingItem.getQuantity() + quantity);
