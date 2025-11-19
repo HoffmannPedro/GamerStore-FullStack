@@ -12,8 +12,18 @@ export const AuthProvider = ({ children }) => {
         const token = localStorage.getItem('token');
         const username = localStorage.getItem('username');
         if (token && username) {
-            setUser({ username });  // o pedir info al backend
+            const decoded = parseJwt(token);
+
+            if (decoded.exp * 1000 < Date.now()) {
+                logout();
+            } else {
+                setUser({
+                    username: decoded.sub,
+                    role: decoded.role
+                });
+            }
         }
+        setLoading(false);
     }, []);
 
     // LOGIN
@@ -24,7 +34,13 @@ export const AuthProvider = ({ children }) => {
             const token = await api.login(username, password);
             localStorage.setItem('token', token);  // Guardamos el JWT en localStorage
             localStorage.setItem('username', username);
-            setUser({ username });                 // Estado: Usuario logueado
+
+            const decoded = parseJwt(token);
+
+            setUser({
+                username: decoded.sub,
+                role: decoded.role
+            });                 // Estado: Usuario logueado
             setLoading(false);
             return true;
         } catch (err) {
@@ -78,5 +94,14 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
+// Decodifica el payload del JWT (la parte del medio)
+function parseJwt (token) {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+}
 
 export const useAuth = () => useContext(AuthContext);

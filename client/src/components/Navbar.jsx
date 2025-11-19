@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Outlet, Link } from 'react-router-dom';
 
 export default function Navbar() {
-    const { user, logout } = useAuth();
+    const { user, logout, isAuthenticated } = useAuth();
 
     return (
         <div>
@@ -18,6 +18,15 @@ export default function Navbar() {
                         <Link to="/cart" className="px-4 py-2 rounded bg-primary hover:brightness-125 transition duration-100 ease-in">
                             Carrito
                         </Link>
+                        {/* Solo mostramos este botón si está logueado (o idealmente si es admin) */}
+                        {user && user.role === 'ADMIN' && (
+                            <Link
+                                to="/admin"
+                                className="text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                            >
+                                Panel Admin 🔒
+                            </Link>
+                        )}
                     </div>
 
                     <div>
@@ -26,7 +35,7 @@ export default function Navbar() {
                                 onClick={logout}
                                 className="px-4 py-2 rounded bg-primary hover:brightness-125 transition duration-100 ease-in"
                             >
-                                 Cerrar sesión {/* ({user.username}) */}
+                                Cerrar sesión {/* ({user.username}) */}
                             </button>
                         ) : (
                             <Link

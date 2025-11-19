@@ -49,6 +49,25 @@ const api = {
         return response.json();
     },
 
+    createProduct : async (productData) => {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/products`, {
+            method: 'POST',
+            headers: { 
+                'Authorization' : `Bearer ${token}`,
+                'Content-Type' : 'application/json'
+            },
+            body: JSON.stringify(productData)
+        });
+
+        if (!response.ok) {
+            if (response.status === 403) throw new Error('No tienes permisos de Administrador');
+            throw new Error('Error al crear el producto');
+        }
+        return response.json();
+    }
+    ,
+
     // Cart
     getCart: async () => {
         const token = getToken();

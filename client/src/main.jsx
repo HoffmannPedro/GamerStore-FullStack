@@ -11,6 +11,7 @@ import ProductList from './components/ProductList.jsx';
 import Cart from './components/Cart.jsx';
 import { CartProvider } from './contexts/CartContext.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
+import AdminPage from './pages/AdminPage.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')).render(
               <Route path="cart" element={<Cart />} />
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
+              <Route path="admin" element={<AdminPage />} />
             </Route>
           </Routes>
         </CartProvider>

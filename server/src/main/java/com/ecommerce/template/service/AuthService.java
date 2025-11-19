@@ -34,12 +34,13 @@ public class AuthService {
         user.setRole("USER"); // Asigna rol por defecto.
 
         userRepository.save(user);
-        return jwtUtil.generateToken(username);
+        return jwtUtil.generateToken(username, user.getRole());
     }
 
     public String login(String username, String password) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(username, password));
-        return jwtUtil.generateToken(username);
+        User user = userRepository.findByUsername(username).orElseThrow();
+        return jwtUtil.generateToken(username, user.getRole());
     }
 }
