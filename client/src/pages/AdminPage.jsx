@@ -10,7 +10,8 @@ function AdminPage() {
         price: '',
         stock: '',
         imageUrl: '',
-        categoryId: ''
+        categoryId: '',
+        description: ''
     });
     const [message, setMessage] = useState(null);
 
@@ -44,7 +45,7 @@ function AdminPage() {
             setMessage({ type: 'success', text: '¡Producto creado con éxito! 🎉' });
             
             // Limpiar formulario
-            setFormData({ name: '', price: '', stock: '', imageUrl: '', categoryId: '' });
+            setFormData({ name: '', price: '', stock: '', imageUrl: '', categoryId: '' , description: ''});
 
         } catch (error) {
             setMessage({ type: 'error', text: error.message });
@@ -111,6 +112,17 @@ function AdminPage() {
                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                     </select>
+                </div>
+
+                {/* Descripción */}
+                <div>
+                    <label className="block text-gray-300 mb-2">Descripción</label>
+                    <textarea
+                        name="description" required rows="4"
+                        value={formData.description} onChange={handleChange}
+                        className="w-full p-3 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-btnGreen outline-none"
+                        placeholder="Detalla las características del producto..."
+                    />
                 </div>
 
                 {/* Imagen URL */}
