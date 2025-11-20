@@ -10,9 +10,10 @@ public class ProductDTO {
     private String categoryName;
     private Long categoryId;
     private String imageUrl;
+    private String description;
 
     public ProductDTO() {}
-    public ProductDTO(Long id, String name, BigDecimal price, Integer stock, String categoryName, Long categoryId, String imageUrl) {
+    public ProductDTO(Long id, String name, BigDecimal price, Integer stock, String categoryName, Long categoryId, String imageUrl, String description) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -20,6 +21,7 @@ public class ProductDTO {
         this.categoryName = categoryName;
         this.categoryId = categoryId;
         this.imageUrl = imageUrl;
+        this.description = description;
     }
 
     public Long getId() {
@@ -66,4 +68,7 @@ public class ProductDTO {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }

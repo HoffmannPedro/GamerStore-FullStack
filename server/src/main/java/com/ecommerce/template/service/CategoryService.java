@@ -36,7 +36,8 @@ public class CategoryService {
                                         product.getStock(),
                                         category.getName(),
                                         category.getId(),
-                                        product.getImageUrl()
+                                        product.getImageUrl(),
+                                        product.getDescription()
                                 ))
                                 .collect(Collectors.toList())
                 ))

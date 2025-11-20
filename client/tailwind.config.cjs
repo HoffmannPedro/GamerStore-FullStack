@@ -31,6 +31,20 @@ module.exports = {
             borderRadius: {
                 xl2: "1.25rem",
             },
+            keyframes: { // <-- Agrega esto
+                fadeIn: {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
+                scaleUp: {
+                    '0%': { transform: 'scale(0.95)', opacity: '0.8' },
+                    '100%': { transform: 'scale(1)', opacity: '1' },
+                }
+            },
+            animation: { // <-- Y esto
+                'fade-in': 'fadeIn 0.2s ease-out forwards',
+                'scale-up': 'scaleUp 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards', // Bounce effect
+            }
         },
     },
     plugins: [],

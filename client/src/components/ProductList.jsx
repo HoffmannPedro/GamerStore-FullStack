@@ -3,6 +3,7 @@ import { useCart } from '../contexts/CartContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
+import ProductModal from './ProductModal';
 
 function ProductList() {
     const { addToCart } = useCart();
@@ -18,21 +19,23 @@ function ProductList() {
     const [sortOrder, setSortOrder] = useState("default");
     // const [inStock, setInStock] = useState(false); // Si quieres agregar el checkbox después
 
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
 
-    // 1. CARGAR CATEGORÍAS (Corregido: Agregado [] para ejecutar solo una vez)
+    // 1. CARGAR CATEGORÍAS
     useEffect(() => {
         const loadCategories = async () => {
             try {
                 const data = await api.getCategories();
                 setCategories(data);
             } catch (err) {
-                console.log("error al cargar categorías");
+                console.log("Error al cargar categorías", err);
             }
         }
         loadCategories();
-    }, []); // <--- Importante: array vacío
+    }, []);
 
     // 2. CARGAR PRODUCTOS CON FILTROS (Server-Side Filtering)
     // Este efecto reemplaza al fetch inicial, ya que se ejecuta al montar el componente
@@ -49,8 +52,8 @@ function ProductList() {
                 const data = await api.getProducts(filters);
                 setProducts(data);
                 setError(null); // Limpiamos error si hubo éxito
-            } catch (error) {
-                console.error("Error filtrando productos:", error);
+            } catch (err) {
+                console.error("Error filtrando productos:", err);
                 setError("No se pudieron cargar los productos.");
             } finally {
                 setLoading(false);
@@ -59,6 +62,22 @@ function ProductList() {
 
         return () => clearTimeout(timerId);
     }, [searchTerm, selectedCategory, sortOrder]);
+
+    
+    const handleAdd = (product) => {
+        if (!isAuthenticated()) {
+            alert('Iniciá sesión para agregar al carrito');
+            navigate('/login');
+            return;
+        }
+        addToCart(product);
+    }
+    
+    // FUNCIONES DE MODAL
+    const openModal = (product) => setSelectedProduct(product);
+    const closeModal = () => setSelectedProduct(null);
+
+
 
     if (loading && products.length === 0) {
         return <div className="text-center mt-8">Cargando productos...</div>;
@@ -78,21 +97,11 @@ function ProductList() {
         );
     }
 
-    const handleAdd = (product) => {
-        if (!isAuthenticated()) {
-            alert('Iniciá sesión para agregar al carrito');
-            navigate('/login');
-            return;
-        }
-        addToCart(product);
-    }
-
     return (
         <div className="max-w-6xl mx-auto p-6">
             <h2 className="text-4xl font-bold mb-6 text-center text-white">Productos</h2>
 
             {/* --- BARRA DE FILTROS (Nueva sección) --- */}
-            {/* Diseñada oscura para combinar con tu tema */}
             <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 rounded-lg bg-gray-800/50 border border-gray-700">
 
                 {/* Buscador */}
@@ -131,12 +140,16 @@ function ProductList() {
                     <option value="alpha_desc">Nombre: Z - A</option>
                 </select>
             </div>
-
+            {/* --- GRILLA DE PRODUCTOS --- */}
             {products.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {products.map(product => (
-                        <div key={product.id} className="relative w-full bg-terciary p-6 rounded-lg shadow hover:shadow-lg ring-1 ring-gray-600 card-hover inline-grid group">
-                            {/* Badge de Stock (Nuevo) */}
+                        <div 
+                            key={product.id} 
+                            className="relative w-full bg-terciary p-6 rounded-lg shadow hover:shadow-lg ring-1 ring-gray-600 card-hover inline-grid group"
+                            onClick={() => openModal(product)}
+                        >
+                            {/* Badge de Stock*/}
                             <div className="absolute bottom-1/4 right-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <span className={`text-xs px-2 py-1 rounded-full font-bold ${product.stock > 0 ? 'bg-green-900 text-green-100' : 'bg-red-900 text-red-100'
                                     }`}>
@@ -154,7 +167,10 @@ function ProductList() {
                             <p className="text-gray-200 mb-4 font-semibold">${product.price.toFixed(2)}</p>
 
                             <button
-                                onClick={() => handleAdd(product)}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleAdd(product)
+                                }}
                                 disabled={!isAuthenticated()}
                                 className={`w-full py-2 px-4 rounded ${isAuthenticated() && product.stock != 0
                                     ? 'bg-btnGreen text-white hover:brightness-125'
@@ -176,6 +192,13 @@ function ProductList() {
                         Limpiar filtros
                     </button>
                 </div>
+            )}
+
+            {selectedProduct && (
+                <ProductModal
+                    product={selectedProduct}
+                    onClose={closeModal}
+                />
             )}
 
         </div>

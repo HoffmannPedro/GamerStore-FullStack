@@ -59,7 +59,8 @@ public class ProductService {
                         product.getStock(),
                         product.getCategory() != null ? product.getCategory().getName() : "Sin categoría",
                         product.getCategory() != null ? product.getCategory().getId() : null,
-                        product.getImageUrl()
+                        product.getImageUrl(),
+                        product.getDescription()                        
                 ))
                 .collect(Collectors.toList());
     }
@@ -78,7 +79,8 @@ public class ProductService {
                     productDTO.getPrice(),
                     productDTO.getStock(),
                     category,
-                    productDTO.getImageUrl()
+                    productDTO.getImageUrl(),
+                    productDTO.getDescription()
             );
             product = productRepository.save(product);
             logger.info("Producto creado con ID: {}", product.getId());
@@ -89,7 +91,8 @@ public class ProductService {
                     product.getStock(),
                     product.getCategory() != null ? product.getCategory().getName() : "Sin categoría",
                     product.getCategory() != null ? product.getCategory().getId() : null,
-                    product.getImageUrl()
+                    product.getImageUrl(),
+                    product.getDescription()
             );
         } catch (Exception e) {
             logger.error("Error al crear producto: {}", e.getMessage());
@@ -131,7 +134,8 @@ public class ProductService {
         updatedProduct.getStock(),
         updatedProduct.getCategory() != null ? updatedProduct.getCategory().getName() : "Sin categoría",
         updatedProduct.getCategory() != null ? updatedProduct.getCategory().getId() : null,
-        updatedProduct.getImageUrl()
+        updatedProduct.getImageUrl(),
+        updatedProduct.getDescription()
     );
     }
     

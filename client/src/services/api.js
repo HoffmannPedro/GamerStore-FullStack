@@ -35,9 +35,7 @@ const api = {
         if (filters.inStock) params.append('inStock', 'true');
 
         const response = await fetch(`${API_URL}/products?${params.toString()}`, {
-            method: 'GET',
-            headers: {'Content-Type' : 'application/json'
-            }
+            method: 'GET'
         });
         if (!response.ok) throw new Error('Error al obtener los productos');
         return response.json();

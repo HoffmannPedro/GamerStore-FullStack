@@ -38,8 +38,7 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://spectacular-miracle-production.up.railway.app"
-        ));
+                "https://spectacular-miracle-production.up.railway.app"));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
@@ -58,28 +57,28 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // 1. AUTENTICACIÓN: Pública (Obvio)
-                        .requestMatchers("/api/auth/**").permitAll()
+                        // 1. Rutas PÚBLICAS (Orden explícito)
+                        .requestMatchers("/api/auth/**").permitAll() // Login y Register
+                        .requestMatchers(HttpMethod.GET, "/api/products").permitAll() // Listar productos
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll() // Detalle producto
+                        .requestMatchers(HttpMethod.GET, "/api/categories").permitAll() // Listar categorías
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll() // Detalle categoría (si
+                                                                                           // existiera)
 
-                        // 2. PRODUCTOS Y CATEGORÍAS:
-                        // Ver (GET) es público. Crear/Borrar (POST/DELETE) requiere login.
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
-
-                        // Ojo: Si quieres que SOLO admins creen productos, aquí iría .hasRole("ADMIN")
-                        // Por ahora lo dejamos en .authenticated() para que al menos requiera login.
+                        // 2. Rutas de ADMIN (Protegidas)
+                        .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
 
-                        // 3. CARRITO: ¡SIEMPRE PROTEGIDO! 🔒
-                        // Necesitas el token para saber qué usuario está comprando.
+                        // 3. Rutas de USUARIO/CLIENTE (Carrito - Protegidas)
                         .requestMatchers("/api/cart/**").authenticated()
 
-                        // 4. Cualquier otra cosa: Cerrada.
+                        // 4. Todo lo demás cerrado
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 

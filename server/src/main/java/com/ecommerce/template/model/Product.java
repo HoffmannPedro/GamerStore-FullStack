@@ -28,16 +28,20 @@ public class Product {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(columnDefinition = "TEXT") // Permite textos largos
+    private String description;
+
     // Constructor vacío para JPA
     public Product() {}
 
     // Constructor con campos 
-    public Product(String name, BigDecimal price, Integer stock, Category category, String imageUrl) {
+    public Product(String name, BigDecimal price, Integer stock, Category category, String imageUrl, String description) {
         this.name = name;
         this.price = price;
         this.stock = stock;
         this.category = category;
         this.imageUrl = imageUrl;
+        this.description = description;
     }
 
     // Getters y Setters
@@ -79,4 +83,7 @@ public class Product {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 }
