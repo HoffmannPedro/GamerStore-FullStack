@@ -23,7 +23,7 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
     public List<CategoryDTO> getAllCategories() {
-        logger.info("Obteniendo todas las categorías");
+        logger.info("📂 [CATEGORIAS] Obteniendo todas las categorías");
         return categoryRepository.findAll().stream()
                 .map(category -> new CategoryDTO(
                         category.getId(),
@@ -46,31 +46,31 @@ public class CategoryService {
 
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         try {
-            logger.info("Creando categoría: {}", categoryDTO.getName());
+            logger.info("✨ [CATEGORIAS] Creando nueva categoría: '{}'", categoryDTO.getName());
             Category category = new Category(categoryDTO.getName());
             category = categoryRepository.save(category);
 
-            logger.info("Categoría {} creada con ID: {}", categoryDTO.getName(), category.getId());
+            logger.info("✨ [CATEGORIAS] Categoría {} creada con ID: {}", categoryDTO.getName(), category.getId());
             return new CategoryDTO(category.getId(), category.getName(), new ArrayList<>());
         } catch (Exception e) {
-            logger.error("Error al crear categoría: {}", e.getMessage());
+            logger.error("❌ [CATEGORIAS] Error al crear categoría: {}", e.getMessage());
             throw new RuntimeException("Error al crear categoría: " + e.getMessage());
         }
     }
 
     public void deleteCategory(Long id) {
         try {
-            logger.info("Eliminando categoría con ID: {}", id);
+            logger.info("🗑️ [CATEGORIAS] Intentando borrar ID: {}", id);
             Category category = categoryRepository.findById(id)
                     .orElseThrow(() -> new IllegalArgumentException("Categoría con id:" + id + " no encontrada" ));
             if (!category.getProducts().isEmpty()) {
-                logger.warn("Intento de eliminar categoría con productos {}", id);
+                logger.warn("⚠️ [CATEGORIAS] No se puede borrar: tiene productos asociados.");
                 throw new IllegalArgumentException("No se puede eliminar una categoría que tiene productos asociados");
             }
             categoryRepository.delete(category);
-            logger.info("Categoría {} eliminada con ID: {}", category.getName(), id);
+            logger.info("🗑️ [CATEGORIAS] Categoría {} eliminada con ID: {}", category.getName(), id);
         } catch (RuntimeException e) {
-            logger.error("Error al eliminar categoría: {}", e.getMessage());
+            logger.error("❌ [CATEGORIAS] Error al eliminar categoría: {}", e.getMessage());
             throw new RuntimeException("Error al eliminar categoría: " + e.getMessage());
         }
     }
