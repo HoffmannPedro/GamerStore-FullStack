@@ -46,7 +46,8 @@ function ProductList() {
                 const filters = {
                     searchTerm,
                     categoryId: selectedCategory,
-                    sortOrder
+                    sortOrder,
+                    active: true
                 };
 
                 const data = await api.getProducts(filters);

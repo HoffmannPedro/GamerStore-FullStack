@@ -1,7 +1,13 @@
 package com.ecommerce.template.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
+
+@Getter
+@Setter
 
 @Entity
 @Table(name = "products")
@@ -31,59 +37,20 @@ public class Product {
     @Column(columnDefinition = "TEXT") // Permite textos largos
     private String description;
 
+    @Column(name = "is_active", nullable = false)
+    private Boolean active = true;
+
     // Constructor vacío para JPA
     public Product() {}
 
     // Constructor con campos 
-    public Product(String name, BigDecimal price, Integer stock, Category category, String imageUrl, String description) {
+    public Product(String name, BigDecimal price, Integer stock, Category category, String imageUrl, String description, Boolean active) {
         this.name = name;
         this.price = price;
         this.stock = stock;
         this.category = category;
         this.imageUrl = imageUrl;
         this.description = description;
+        this.active = active;
     }
-
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public BigDecimal getPrice() {
-        return price;
-    }
-    public void setPrice(BigDecimal price) {
-        this.price = price;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public Category getCategory() {
-        return category;
-    }
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
 }

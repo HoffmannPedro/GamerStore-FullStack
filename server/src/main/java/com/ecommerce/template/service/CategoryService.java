@@ -3,6 +3,7 @@ package com.ecommerce.template.service;
 import com.ecommerce.template.dto.CategoryDTO;
 import com.ecommerce.template.dto.ProductDTO;
 import com.ecommerce.template.model.Category;
+import com.ecommerce.template.model.Product;
 import com.ecommerce.template.repository.CategoryRepository;
 
 import org.slf4j.Logger;
@@ -29,16 +30,7 @@ public class CategoryService {
                         category.getId(),
                         category.getName(),
                         category.getProducts().stream()
-                                .map(product -> new ProductDTO(
-                                        product.getId(),
-                                        product.getName(),
-                                        product.getPrice(),
-                                        product.getStock(),
-                                        category.getName(),
-                                        category.getId(),
-                                        product.getImageUrl(),
-                                        product.getDescription()
-                                ))
+                                .map(this::convertToDTO)
                                 .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
@@ -73,5 +65,18 @@ public class CategoryService {
             logger.error("❌ [CATEGORIAS] Error al eliminar categoría: {}", e.getMessage());
             throw new RuntimeException("Error al eliminar categoría: " + e.getMessage());
         }
+    }
+
+    private ProductDTO convertToDTO(Product product) {
+        return new ProductDTO(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCategory() != null ? product.getCategory().getName() : "Sin categoría",
+                        product.getCategory() != null ? product.getCategory().getId() : null,
+                        product.getImageUrl(),
+                        product.getDescription(),
+                        product.getActive());
     }
 }

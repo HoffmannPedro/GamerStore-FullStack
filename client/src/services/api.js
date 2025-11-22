@@ -7,7 +7,7 @@ const api = {
     register: async (username, password) => {
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
-            headers: {'Content-Type' : 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
         if (!response.ok) throw new Error('Error al registrarse');
@@ -17,7 +17,7 @@ const api = {
     login: async (username, password) => {
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
-            headers: {'Content-Type' : 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
         if (!response.ok) throw new Error('Error al iniciar sesión. Usuario o contraseña inválidos.');
@@ -33,6 +33,7 @@ const api = {
         if (filters.categoryId && filters.categoryId !== "Todas") params.append('categoryId', filters.categoryId);
         if (filters.sortOrder && filters.sortOrder !== "default") params.append('sortOrder', filters.sortOrder);
         if (filters.inStock) params.append('inStock', 'true');
+        if (filters.active !== undefined) params.append('active', filters.active);
 
         const response = await fetch(`${API_URL}/products?${params.toString()}`, {
             method: 'GET'
@@ -47,13 +48,13 @@ const api = {
         return response.json();
     },
 
-    createProduct : async (productData) => {
+    createProduct: async (productData) => {
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/products`, {
             method: 'POST',
-            headers: { 
-                'Authorization' : `Bearer ${token}`,
-                'Content-Type' : 'application/json'
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify(productData)
         });
@@ -65,13 +66,47 @@ const api = {
         return response.json();
     }
     ,
+    updateProduct: async (id, productData) => {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/products/${id}`, {
+            method: 'PUT', // <--- Importante que sea PUT
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(productData)
+        });
+        if (!response.ok) {
+            if (response.status === 403) throw new Error('No tienes permisos de Administrador');
+            throw new Error('Error al actualizar el producto');
+        }
+        return response.json();
+    },
+
+    uploadImage: async (file) => {
+        const token = localStorage.getItem('token');
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch(`${API_URL}/images/upload`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': `Bearer ${token}`
+                // OJO: NO poner Content-Type aquí, el navegador lo pone solo con el boundary correcto al usar FormData
+            },
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error al subir la imagen');
+        return response.json(); // Retorna { url: "https://..." }
+    },
 
     // Cart
     getCart: async () => {
         const token = getToken();
         if (!token) return { items: [] };  // ← DEVUELVE VACÍO
         const response = await fetch(`${API_URL}/cart`, {
-            headers: { 'Authorization' : `Bearer ${token}`}
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Error al obtener el carrito');
         return response.json();
@@ -83,8 +118,8 @@ const api = {
         const response = await fetch(`${API_URL}/cart/items`, {
             method: 'POST',
             headers: {
-                'Authorization' : `Bearer ${token}`,
-                'Content-Type' : 'application/json'
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ productId, quantity })
         });
@@ -96,7 +131,7 @@ const api = {
         const token = getToken();
         const response = await fetch(`${API_URL}/cart/items/${productId}/one`, {
             method: 'DELETE',
-            headers: {'Authorization' : `Bearer ${token}`}
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Error al remover una unidad del item');
         return response.json();
@@ -106,7 +141,7 @@ const api = {
         const token = getToken();
         const response = await fetch(`${API_URL}/cart/items/${productId}`, {
             method: 'DELETE',
-            headers: { 'Authorization' : `Bearer ${token}` } 
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Error al remover el item del carrito');
         return response.json();
@@ -116,7 +151,7 @@ const api = {
         const token = getToken();
         const response = await fetch(`${API_URL}/cart/clear`, {
             method: 'DELETE',
-            headers: { 'Authorization' : `Bearer ${token}`}
+            headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Error, el carrito esta vacío');
         return response.json();

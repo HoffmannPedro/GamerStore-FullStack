@@ -62,8 +62,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/products").permitAll() // Listar productos
                         .requestMatchers(HttpMethod.GET, "/api/products/**").permitAll() // Detalle producto
                         .requestMatchers(HttpMethod.GET, "/api/categories").permitAll() // Listar categorías
-                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll() // Detalle categoría (si
-                                                                                           // existiera)
+                        .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll() // Detalle categoría (si existiera)
 
                         // 2. Rutas de ADMIN (Protegidas)
                         .requestMatchers(HttpMethod.POST, "/api/products").hasRole("ADMIN")
@@ -71,6 +70,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/categories/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.POST, "/api/images/upload").hasRole("ADMIN")
 
                         // 3. Rutas de USUARIO/CLIENTE (Carrito - Protegidas)
                         .requestMatchers("/api/cart/**").authenticated()

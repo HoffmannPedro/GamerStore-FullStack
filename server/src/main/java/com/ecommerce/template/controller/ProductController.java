@@ -25,9 +25,10 @@ public class ProductController {
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) Boolean inStock,
+            @RequestParam(required = false) Boolean active,
             @RequestParam(required = false) String sortOrder
     ) {
-        return ResponseEntity.ok(productService.getAllProducts(name, categoryId, inStock, sortOrder));
+        return ResponseEntity.ok(productService.getAllProducts(name, categoryId, inStock, active, sortOrder));
     }
 
     @PostMapping

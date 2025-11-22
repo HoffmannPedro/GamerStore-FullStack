@@ -27,7 +27,7 @@ public class ProductService {
     private CategoryRepository categoryRepository;
 
     // OBTENER PRODUCTOS (CON FILTROS)
-    public List<ProductDTO> getAllProducts(String name, Long categoryId, Boolean inStock, String sortOrder) {
+    public List<ProductDTO> getAllProducts(String name, Long categoryId, Boolean inStock, Boolean active, String sortOrder) {
         logger.info("🔍 [PRODUCTOS] Buscando... Filtros -> Nombre: '{}', CatID: {}, EnStock: {}, Orden: '{}'",
                 name != null ? name : "Todos",
                 categoryId != null ? categoryId : "Todas",
@@ -62,19 +62,11 @@ public class ProductService {
         }
 
         // Llama al Repositorio Inteligente
-        List<Product> products = productRepository.findWithFilters(searchPattern, categoryId, minStock, sort);
+        List<Product> products = productRepository.findWithFilters(searchPattern, categoryId, minStock, active, sort);
         logger.info("📦 [PRODUCTOS] Se encontraron {} resultados.", products.size());
 
         return products.stream()
-                .map(product -> new ProductDTO(
-                        product.getId(),
-                        product.getName(),
-                        product.getPrice(),
-                        product.getStock(),
-                        product.getCategory() != null ? product.getCategory().getName() : "Sin categoría",
-                        product.getCategory() != null ? product.getCategory().getId() : null,
-                        product.getImageUrl(),
-                        product.getDescription()))
+                .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -95,19 +87,12 @@ public class ProductService {
                     productDTO.getStock(),
                     category,
                     productDTO.getImageUrl(),
-                    productDTO.getDescription());
+                    productDTO.getDescription(),
+                    true);
             product = productRepository.save(product);
             logger.info("✅ [PRODUCTOS] Creado exitosamente con ID: {}", product.getId());
 
-            return new ProductDTO(
-                    product.getId(),
-                    product.getName(),
-                    product.getPrice(),
-                    product.getStock(),
-                    product.getCategory() != null ? product.getCategory().getName() : "Sin categoría",
-                    product.getCategory() != null ? product.getCategory().getId() : null,
-                    product.getImageUrl(),
-                    product.getDescription());
+            return convertToDTO(product);
         } catch (Exception e) {
             logger.error("❌ [PRODUCTOS] Error creando: {}", e.getMessage());
             throw new RuntimeException("Error al crear producto: " + e.getMessage());
@@ -135,28 +120,41 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID " + id));
 
-        if (productDTO.getName() != null)
-            product.setName(productDTO.getName());
-        if (productDTO.getPrice() != null)
-            product.setPrice(productDTO.getPrice());
-        if (productDTO.getImageUrl() != null)
-            product.setImageUrl(productDTO.getImageUrl());
+        if (productDTO.getName() != null) product.setName(productDTO.getName());
+        if (productDTO.getPrice() != null) product.setPrice(productDTO.getPrice());
+        if (productDTO.getImageUrl() != null) product.setImageUrl(productDTO.getImageUrl());
+        if (productDTO.getStock() != null) product.setStock(productDTO.getStock());
+        if (productDTO.getDescription() != null) product.setDescription(productDTO.getDescription());
 
-        if (productDTO.getStock() != null)
-            product.setStock(productDTO.getStock());
+        // --- ACTUALIZAR ESTADO (SOFT DELETE) ---
+        if (productDTO.getActive() != null) {
+            product.setActive(productDTO.getActive());
+            logger.info("Producto ID {} estado cambiado a: {}", id, product.getActive());
+        }
+
+        // Si cambian la categoría
+        if (productDTO.getCategoryId() != null) {
+            Category category = categoryRepository.findById(productDTO.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("Categoría no encontrada"));
+            product.setCategory(category);
+        }
 
         Product updatedProduct = productRepository.save(product);
 
         logger.info("✅ [PRODUCTOS] Actualización guardada para ID: {}", id);
-        return new ProductDTO(
-                updatedProduct.getId(),
-                updatedProduct.getName(),
-                updatedProduct.getPrice(),
-                updatedProduct.getStock(),
-                updatedProduct.getCategory() != null ? updatedProduct.getCategory().getName() : "Sin categoría",
-                updatedProduct.getCategory() != null ? updatedProduct.getCategory().getId() : null,
-                updatedProduct.getImageUrl(),
-                updatedProduct.getDescription());
+        return convertToDTO(updatedProduct);
     }
 
+    private ProductDTO convertToDTO(Product product) {
+        return new ProductDTO(
+                        product.getId(),
+                        product.getName(),
+                        product.getPrice(),
+                        product.getStock(),
+                        product.getCategory() != null ? product.getCategory().getName() : "Sin categoría",
+                        product.getCategory() != null ? product.getCategory().getId() : null,
+                        product.getImageUrl(),
+                        product.getDescription(),
+                        product.getActive());
+    }
 }
