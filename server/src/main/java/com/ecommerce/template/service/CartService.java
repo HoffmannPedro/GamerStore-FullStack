@@ -152,7 +152,9 @@ public class CartService {
                         i.getProduct().getId(),
                         i.getProduct().getName(),
                         i.getProduct().getPrice().doubleValue(),
-                        i.getQuantity())).collect(Collectors.toList()));
+                        i.getProduct().getStock(),
+                        i.getQuantity(),
+                        i.getProduct().getImageUrl())).collect(Collectors.toList()));
     }
 
 }
