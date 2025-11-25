@@ -19,7 +19,7 @@ https://gamerstore-fullstack-production.up.railway.app
 
 ## 📸 Preview
 
-![Home Page](./client/public/img/screenshot-home.png)
+![Home Page](https://res.cloudinary.com/dlvxoftyv/image/upload/v1764042528/Captura_de_pantalla_2025-11-25_004830_f16wmw.jpg)
 
 ------------------------------------------------------------------------
 
