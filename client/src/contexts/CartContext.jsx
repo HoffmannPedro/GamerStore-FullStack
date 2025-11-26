@@ -205,21 +205,31 @@ export const CartProvider = ({ children }) => {
         return mapped.sort((a, b) => a.product.id - b.product.id);
     };
 
-    // Función auxiliar para restaurar el item (es básicamente un agregar)
+    // FUNCIÓN DE RESTAURAR (Deshacer) - Versión "Anti-Freeze" Móvil ❄️🔥
     const undoDelete = async (item) => {
+        // 1. Limpiamos cualquier toast previo para que no se acumulen
+        toast.dismiss(); 
+        
+        const toastId = toast.loading('Restaurando...');
+        
         try {
-            // Usamos el mismo endpoint de agregar, pasando la cantidad original
-            const data = await toast.promise(
-                api.addItem(item.product.id, item.quantity),
-                {
-                    loading: 'Restaurando...',
-                    success: '¡Producto restaurado! ♻️',
-                    error: 'No se pudo restaurar',
-                }
-            );
+            const data = await api.addItem(item.product.id, item.quantity);
             setCartItems(mapAndSort(data.items));
+
+            // 2. Mostramos éxito
+            toast.success('¡Producto recuperado! ♻️', { 
+                id: toastId,
+            });
+
+            // 3. FUERZA BRUTA: Matamos el toast a los 3 segundos sí o sí
+            // Esto ignora si el usuario tiene el dedo puesto encima
+            setTimeout(() => {
+                toast.dismiss(toastId);
+            }, 4000);
+
         } catch (error) {
             console.error(error);
+            toast.error('No se pudo restaurar', { id: toastId });
         }
     };
 

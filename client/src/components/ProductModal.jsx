@@ -59,7 +59,7 @@ const ProductModal = ({ product, onClose }) => {
                     <img 
                         src={product.imageUrl} 
                         alt={product.name} 
-                        className="w-full h-full object-contain drop-shadow-xl"
+                        className="w-full h-full object-cover drop-shadow-xl"
                         onError={(e) => e.target.src = "/img/placeholder.jpg"}
                     />
                     
