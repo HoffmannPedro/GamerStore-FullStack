@@ -42,9 +42,10 @@ GamerStore-FullStack/
 ├── client/                 # 🎨 Frontend (React + Vite)
 │   ├── public/             # Assets estáticos
 │   ├── src/
-│   │   ├── components/     # Componentes (Navbar, Cart, AdminTable)
+│   │   ├── components/     # Componentes (Navbar, Cart, Loader, ProductList, ProductModal)
+│   │   │   └── admin/      # Componentes (ProductForm, ProductTable)
 │   │   ├── contexts/       # Estado Global (Auth, Cart)
-│   │   ├── pages/          # Vistas (Home, Login, AdminPage)
+│   │   ├── pages/          # Vistas (Register, Login, AdminPage)
 │   │   └── services/       # Cliente HTTP (api.js)
 │   └── package.json
 │
