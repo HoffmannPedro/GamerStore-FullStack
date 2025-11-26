@@ -62,3 +62,115 @@ GamerStore-FullStack/
 │
 ├── Dockerfile              # Configuración de despliegue
 └── README.md               # Documentación
+
+
+---
+
+## 🚀 Tecnologías
+
+### Backend
+- Java 21
+- Spring Boot 3
+- Spring Security 6
+- JPA / Hibernate
+
+### Frontend
+- React 18
+- Vite
+- Tailwind CSS
+- Context API
+
+### Base de Datos
+- PostgreSQL 17+
+
+### Infraestructura
+- Docker
+- Railway CI/CD
+
+### Seguridad
+- JWT (HS512)
+- BCrypt para contraseñas
+
+---
+
+## ⚙️ Configuración y Variables de Entorno
+
+### Backend (Spring Boot)
+
+| Variable | Descripción |
+| :--- | :--- |
+| `SPRING_DATASOURCE_URL` | URL JDBC (jdbc:postgresql://host:port/db) |
+| `SPRING_DATASOURCE_USERNAME` | Usuario de la BD |
+| `SPRING_DATASOURCE_PASSWORD` | Contraseña de la BD |
+| `JWT_SECRET` | Clave secreta para firmar tokens (mínimo 64 chars) |
+| `CLOUDINARY_CLOUD_NAME` | Nombre del Cloud en Cloudinary |
+| `CLOUDINARY_API_KEY` | API Key de Cloudinary |
+| `CLOUDINARY_API_SECRET` | API Secret de Cloudinary |
+
+---
+
+## Frontend (React)
+
+Crear archivo `.env`:
+
+VITE_API_URL=http://localhost:8080/api
+
+---
+
+## 🛠️ Instalación Local
+
+### Prerrequisitos
+
+- Java 21
+- Node.js 20+
+- PostgreSQL
+
+---
+
+### 1. Clonar repositorio
+
+```bash
+git clone https://github.com/HoffmannPedro/GamerStore-FullStack.git
+cd GamerStore-FullStack
+```
+
+### 2. Iniciar Backend
+
+```bash
+cd server
+./mvnw spring-boot:run
+```
+
+### 3. Iniciar Frontend
+
+```bash
+cd ../client
+npm install
+npm run dev
+```
+
+---
+
+## 📡 API Endpoints Principales
+
+| Método | Endpoint | Acceso | Descripción |
+| :--- | :--- | :--- | :--- |
+| **POST** | `/api/auth/register` | Público | Registrar usuario |
+| **POST** | `/api/auth/login` | Público | Login + token |
+| **GET** | `/api/products` | Público | Listar productos (Filtros: nombre, categoría, stock) |
+| **POST** | `/api/products` | Admin | Crear producto |
+| **GET** | `/api/cart` | User/Admin | Ver carrito |
+| **POST** | `/api/cart/items` | User/Admin | Agregar item |
+| **POST** | `/api/images/upload` | Admin | Subir imagen a Cloudinary |
+
+---
+
+## 👤 Autor
+
+**Pedro Hoffmann**  
+GitHub: https://github.com/HoffmannPedro  
+LinkedIn: Pedro Hoffmann
+
+---
+
+Desarrollado con fines académicos y profesionales.
