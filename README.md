@@ -19,8 +19,8 @@ Para probar la funcionalidad completa (incluido el Panel de Administración):
 
 | Rol | Usuario | Contraseña | Permisos |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin` | `1475963` | ABM de Productos, Subir Imágenes, Ver Todo |
-| **USER** | `cliente` | `123` | Comprar, Ver Carrito |
+| **ADMIN** | `admin` | `1475963` | ABM de Productos, Ver Todo |
+| **USER** | `cliente` | `1234` | Comprar, Ver Carrito |
 
 *(Siéntete libre de registrar un nuevo usuario para probar el flujo desde cero)*
 
