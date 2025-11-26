@@ -62,7 +62,7 @@ GamerStore-FullStack/
 │
 ├── Dockerfile              # Configuración de despliegue
 └── README.md               # Documentación
-
+```
 
 ---
 
