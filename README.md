@@ -7,154 +7,57 @@
 ![Postgres](https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-GamerStore es una plataforma de comercio electrónico robusta y escalable
-diseñada para la venta de hardware y periféricos gaming. Implementa una
-arquitectura Full Stack moderna con seguridad JWT, filtrado en servidor
-y diseño completamente responsivo (en proceso).
+Plataforma de comercio electrónico robusta y escalable diseñada para la venta de hardware gaming. Desarrollada con una arquitectura Full Stack moderna, implementando seguridad JWT, gestión de imágenes en la nube y despliegue continuo.
 
-🔗 **Demo en Vivo:**\
-https://gamerstore-fullstack-production.up.railway.app
+🔗 **Demo en Vivo:** [https://gamerstore.up.railway.app/](https://gamerstore.up.railway.app/)
 
-------------------------------------------------------------------------
+---
+
+## 🧪 Credenciales de Acceso (Demo)
+
+Para probar la funcionalidad completa (incluido el Panel de Administración):
+
+| Rol | Usuario | Contraseña | Permisos |
+| :--- | :--- | :--- | :--- |
+| **ADMIN** | `admin` | `1475963` | ABM de Productos, Subir Imágenes, Ver Todo |
+| **USER** | `cliente` | `123` | Comprar, Ver Carrito |
+
+*(Siéntete libre de registrar un nuevo usuario para probar el flujo desde cero)*
+
+---
 
 ## 📸 Preview
 
-![Home Page](https://res.cloudinary.com/dlvxoftyv/image/upload/v1764042528/Captura_de_pantalla_2025-11-25_004830_f16wmw.jpg)
+![Home Page](https://res.cloudinary.com/dlvxoftyv/image/upload/v1764198956/chrome_EmSTtyps1S_nnjrms.png)
+*(Vista principal de la tienda con listado de productos y filtros)*
 
-------------------------------------------------------------------------
+---
 
 ## 📂 Estructura del Proyecto
 
-    GamerStore-FullStack/
-    ├── client/
-    │   ├── public/img/
-    │   ├── src/
-    │   │   ├── components/
-    │   │   ├── contexts/
-    │   │   ├── pages/
-    │   │   └── services/
-    │   └── package.json
-    │
-    ├── server/
-    │   ├── src/main/java/com/ecommerce/template/
-    │   │   ├── config/
-    │   │   ├── controller/
-    │   │   ├── dto/
-    │   │   ├── model/
-    │   │   ├── repository/
-    │   │   ├── security/
-    │   │   └── service/
-    │   ├── Dockerfile
-    │   └── pom.xml
-    │
-    └── README.md
+El proyecto está organizado como un monorrepo:
 
-------------------------------------------------------------------------
-
-## 🚀 Tecnologías
-
-### Backend
-
--   Java 21
--   Spring Boot 3
--   Spring Security 6
--   JPA/Hibernate
-
-### Frontend
-
--   React 18
--   Vite
--   Tailwind CSS
--   Context API
-
-### Base de Datos
-
--   PostgreSQL 12+
-
-### Infraestructura
-
--   Docker
--   Railway CI/CD
-
-### Seguridad
-
--   JWT (HS512)
--   BCrypt para contraseñas
-
-------------------------------------------------------------------------
-
-## ⚙️ Configuración y Variables de Entorno
-
-### Backend (Spring Boot)
-
-  Variable                     Descripción
-  ---------------------------- -------------
-  SPRING_DATASOURCE_URL        URL JDBC
-  SPRING_DATASOURCE_USERNAME   Usuario
-  SPRING_DATASOURCE_PASSWORD   Contraseña
-  PORT                         Puerto
-
-> La clave JWT se autogenera en cada inicio.
-
-------------------------------------------------------------------------
-
-### Frontend (React)
-
-Crear archivo `.env`:
-
-    VITE_API_URL=http://localhost:8080/api
-
-------------------------------------------------------------------------
-
-## 🛠️ Instalación Local
-
-### Prerrequisitos
-
--   Java 21\
--   Node.js 20+\
--   PostgreSQL
-
-------------------------------------------------------------------------
-
-### 1. Clonar repositorio
-
-``` bash
-git clone https://github.com/HoffmannPedro/GamerStore-FullStack.git
-cd GamerStore-FullStack
-```
-
-### 2. Iniciar Backend
-
-``` bash
-cd server
-./mvnw spring-boot:run
-```
-
-### 3. Iniciar Frontend
-
-``` bash
-cd ../client
-npm install
-npm run dev
-```
-
-------------------------------------------------------------------------
-
-## 📡 API Endpoints Principales
-
-  Método   Endpoint             Acceso    Descripción
-  -------- -------------------- --------- -------------------
-  POST     /api/auth/register   Público   Registrar usuario
-  POST     /api/auth/login      Público   Login + token
-  GET      /api/products        Público   Listar productos
-  POST     /api/products        Auth      Crear producto
-  GET      /api/cart            Auth      Ver carrito
-  POST     /api/cart/items      Auth      Agregar item
-
-------------------------------------------------------------------------
-
-## 👤 Autor
-
-**Pedro Hoffmann**\
-GitHub: https://github.com/HoffmannPedro\
-LinkedIn: Pedro Hoffmann
+```text
+GamerStore-FullStack/
+├── client/                 # 🎨 Frontend (React + Vite)
+│   ├── public/             # Assets estáticos
+│   ├── src/
+│   │   ├── components/     # Componentes (Navbar, Cart, AdminTable)
+│   │   ├── contexts/       # Estado Global (Auth, Cart)
+│   │   ├── pages/          # Vistas (Home, Login, AdminPage)
+│   │   └── services/       # Cliente HTTP (api.js)
+│   └── package.json
+│
+├── server/                 # ⚙️ Backend (Spring Boot)
+│   ├── src/main/java/com/ecommerce/template/
+│   │   ├── config/         # Configuración (CORS, Cloudinary)
+│   │   ├── controller/     # API REST Controllers
+│   │   ├── dto/            # Data Transfer Objects
+│   │   ├── model/          # Entidades JPA
+│   │   ├── repository/     # Repositorios JPA
+│   │   ├── security/       # JWT, Filtros y SecurityConfig
+│   │   └── service/        # Lógica de Negocio
+│   └── pom.xml             # Dependencias Maven
+│
+├── Dockerfile              # Configuración de despliegue
+└── README.md               # Documentación
