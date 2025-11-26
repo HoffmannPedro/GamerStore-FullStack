@@ -80,7 +80,7 @@ function Cart() {
                             </div>
 
                             {/* Controles de Cantidad y Acciones */}
-                            <div className="flex items-center gap-6">
+                            <div className="flex items-center justify-between sm:justify-normal gap-6 w-full sm:w-auto">
                                 {/* Selector de Cantidad */}
                                 <div className="flex items-center bg-gray-800 rounded-full p-1 ring-1 ring-gray-600">
                                     <button

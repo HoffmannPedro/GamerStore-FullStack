@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import ProductModal from './ProductModal';
+import Loader from './Loader';
 
 function ProductList() {
     const { addToCart } = useCart();
@@ -37,8 +38,7 @@ function ProductList() {
         loadCategories();
     }, []);
 
-    // 2. CARGAR PRODUCTOS CON FILTROS (Server-Side Filtering)
-    // Este efecto reemplaza al fetch inicial, ya que se ejecuta al montar el componente
+    // 2. CARGAR PRODUCTOS CON FILTROS
     useEffect(() => {
         const timerId = setTimeout(async () => {
             setLoading(true);
@@ -64,7 +64,7 @@ function ProductList() {
         return () => clearTimeout(timerId);
     }, [searchTerm, selectedCategory, sortOrder]);
 
-    
+
     const handleAdd = (product) => {
         if (!isAuthenticated()) {
             alert('Iniciá sesión para agregar al carrito');
@@ -73,7 +73,7 @@ function ProductList() {
         }
         addToCart(product);
     }
-    
+
     // FUNCIONES DE MODAL
     const openModal = (product) => setSelectedProduct(product);
     const closeModal = () => setSelectedProduct(null);
@@ -81,7 +81,7 @@ function ProductList() {
 
 
     if (loading && products.length === 0) {
-        return <div className="text-center mt-8">Cargando productos...</div>;
+        return <Loader text="Cargando productos..." />;
     }
 
     if (error) {
@@ -102,7 +102,7 @@ function ProductList() {
         <div className="max-w-6xl mx-auto p-6">
             <h2 className="text-4xl font-bold mb-6 text-center text-white">Productos</h2>
 
-            {/* --- BARRA DE FILTROS (Nueva sección) --- */}
+            {/* --- BARRA DE FILTROS --- */}
             <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 rounded-lg bg-gray-800/50 border border-gray-700">
 
                 {/* Buscador */}
@@ -145,8 +145,8 @@ function ProductList() {
             {products.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {products.map(product => (
-                        <div 
-                            key={product.id} 
+                        <div
+                            key={product.id}
                             className="relative w-full bg-terciary p-6 rounded-lg shadow hover:shadow-lg ring-1 ring-gray-600 card-hover inline-grid group"
                             onClick={() => openModal(product)}
                         >
