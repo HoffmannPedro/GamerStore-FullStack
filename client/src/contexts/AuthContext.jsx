@@ -50,6 +50,19 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // LOGIN CON GOOGLE
+    const loginWithGoogle = (token) => {
+        localStorage.setItem('token', token);
+        
+        const decoded = parseJwt(token);
+        if (decoded) {
+            setUser({
+                username: decoded.sub,
+                role: decoded.role
+            });
+        }
+    };
+
     // REGISTER
     const register = async (username, password) => {
         setLoading(true);
@@ -85,6 +98,7 @@ export const AuthProvider = ({ children }) => {
                 login,
                 logout,
                 register,
+                loginWithGoogle,
                 isAuthenticated,
                 loading,
                 error
