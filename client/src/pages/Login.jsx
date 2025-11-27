@@ -15,8 +15,8 @@ export default function Login() {
     // Le quitamos el "/api" del final para tener la raíz del backend
     // Y le pegamos la ruta de login de Google
     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
-    const baseUrl = apiUrl.replace('/api', ''); 
-    const googleLoginUrl = `${baseUrl}/oauth2/authorization/google`;
+    const backendUrl = apiUrl.replace(/\/api$/, '');
+    const googleLoginUrl = `${backendUrl}/oauth2/authorization/google`;
     // ----------------------------------------------
 
     const handleSubmit = async (e) => {
@@ -61,7 +61,7 @@ export default function Login() {
                             placeholder="••••••••"
                             required
                         />
-                         <button
+                        <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
                             className="absolute right-3 top-10 text-gray-400 hover:text-white transition-colors"
@@ -99,7 +99,7 @@ export default function Login() {
 
                 {/* BOTÓN DE GOOGLE CON URL DINÁMICA */}
                 <a
-                    href={googleLoginUrl} 
+                    href={googleLoginUrl}
                     className="w-full flex items-center justify-center gap-3 bg-white text-gray-700 font-bold py-3 rounded hover:bg-gray-100 transition-all shadow-lg"
                 >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
