@@ -25,6 +25,9 @@ public class User implements UserDetails {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(unique = true)
+    private String email;
+
     @Column(nullable = true)
     private String password;
 
@@ -35,6 +38,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
+
+    @Column(name = "profile_picture_url")
+    private String profilePictureUrl;
 
     public User() {
     }

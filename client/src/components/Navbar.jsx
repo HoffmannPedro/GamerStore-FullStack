@@ -7,15 +7,15 @@ export default function Navbar() {
     const { user, logout } = useAuth();
     const { cartItems } = useCart();
     const location = useLocation();
-    
+
     // Estado para el menú móvil
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
     const isActive = (path) => {
-        return location.pathname === path 
-            ? "text-btnGreen font-bold" 
+        return location.pathname === path
+            ? "text-btnGreen font-bold"
             : "text-gray-400 hover:text-white transition-colors";
     };
 
@@ -27,11 +27,11 @@ export default function Navbar() {
             <nav className="sticky top-0 z-40 w-full bg-terciary/95 backdrop-blur-md border-b border-gray-700 shadow-lg">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
-                        
+
                         {/* 1. IZQUIERDA: LOGO + HAMBURGUESA */}
                         <div className="flex items-center gap-4">
                             {/* Botón Hamburguesa (Solo Móvil) */}
-                            <button 
+                            <button
                                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                                 className="md:hidden p-2 text-gray-400 hover:text-white focus:outline-none"
                             >
@@ -67,7 +67,7 @@ export default function Navbar() {
 
                         {/* 3. DERECHA: CARRITO + PERFIL */}
                         <div className="flex items-center gap-4 sm:gap-6">
-                            
+
                             {/* Carrito */}
                             <Link to="/cart" className="relative group" onClick={closeMenu}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-gray-300 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -83,16 +83,47 @@ export default function Navbar() {
                             {/* Separador (Solo Desktop) */}
                             <div className="h-6 w-px bg-gray-700 hidden sm:block"></div>
 
-                            {/* User / Login */}
+                            {/* PERFIL DE USUARIO */}
                             {user ? (
-                                <div className="flex items-center gap-4">
-                                    <div className="text-right hidden sm:block">
-                                        <p className="text-sm font-bold text-white leading-none">{user.username}</p>
-                                        <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
-                                            {user.role}
-                                        </span>
-                                    </div>
-                                    <button onClick={logout} className="p-2 rounded-lg bg-gray-800 border border-gray-700 text-gray-400 hover:text-red-400 transition-all">
+                                <div className="flex items-center gap-3 md:gap-4 pl-4 border-l border-gray-700">
+                                    {/* Avatar + Nombre (Clickable para ir al perfil) */}
+                                    <Link
+                                        to="/profile"
+                                        className="group flex items-center gap-3 hover:bg-gray-800/50 p-1 pr-3 rounded-full transition-all"
+                                    >
+                                        {/* Círculo de la Foto */}
+                                        <div className="h-9 w-9 rounded-full overflow-hidden border-2 border-btnGreen/50 group-hover:border-btnGreen shadow-sm transition-colors relative bg-gray-700">
+                                            {user.imageUrl ? (
+                                                <img
+                                                    src={user.imageUrl}
+                                                    alt={user.username}
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            ) : (
+                                                // Inicial si no tiene foto
+                                                <div className="h-full w-full flex items-center justify-center text-white font-bold text-sm">
+                                                    {user.username.charAt(0).toUpperCase()}
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Info Texto (Solo Desktop) */}
+                                        <div className="hidden md:flex flex-col items-start">
+                                            <p className="text-sm font-bold text-white leading-none group-hover:text-btnGreen transition-colors">
+                                                {user.username}
+                                            </p>
+                                            <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">
+                                                {user.role}
+                                            </span>
+                                        </div>
+                                    </Link>
+
+                                    {/* Botón Logout (Icono discreto) */}
+                                    <button
+                                        onClick={logout}
+                                        className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                                        title="Cerrar Sesión"
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                                         </svg>
@@ -122,17 +153,17 @@ export default function Navbar() {
                                     Hola, {user.username}
                                 </div>
                             )}
-                            
-                            <Link 
-                                to="/" 
+
+                            <Link
+                                to="/"
                                 onClick={closeMenu}
                                 className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/')}`}
                             >
                                 Productos
                             </Link>
 
-                            <Link 
-                                to="/cart" 
+                            <Link
+                                to="/cart"
                                 onClick={closeMenu}
                                 className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
                             >
@@ -140,8 +171,8 @@ export default function Navbar() {
                             </Link>
 
                             {user && user.role === 'ADMIN' && (
-                                <Link 
-                                    to="/admin" 
+                                <Link
+                                    to="/admin"
                                     onClick={closeMenu}
                                     className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/admin')}`}
                                 >
@@ -150,8 +181,8 @@ export default function Navbar() {
                             )}
 
                             {!user && (
-                                <Link 
-                                    to="/login" 
+                                <Link
+                                    to="/login"
                                     onClick={closeMenu}
                                     className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700"
                                 >
@@ -166,7 +197,7 @@ export default function Navbar() {
             <main className="flex-grow w-full">
                 <Outlet />
             </main>
-            
+
             <footer className="bg-terciary border-t border-gray-800 py-6 mt-auto">
                 <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
                     <p>© 2025 GamerStore. Desarrollado por Pedro Hoffmann.</p>

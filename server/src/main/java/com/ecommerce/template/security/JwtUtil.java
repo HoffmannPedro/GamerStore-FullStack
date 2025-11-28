@@ -33,9 +33,10 @@ public class JwtUtil {
     // Token válido por 10 horas
     private final long expiration = 1000 * 60 * 60 * 10;
 
-    public String generateToken(String username, String role) {
+    public String generateToken(String username, String role, String imageUrl) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
+        claims.put("imageUrl", imageUrl != null ? imageUrl : "");
         return createToken(claims, username);
     }
 

@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function Login() {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
@@ -21,7 +21,7 @@ export default function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const success = await login(username, password);
+        const success = await login(email, password);
         if (success) {
             navigate('/');
         }
@@ -30,7 +30,7 @@ export default function Login() {
     return (
         <div className="min-h-[80vh] flex items-center justify-center">
             <div className="w-full max-w-md p-8 bg-terciary rounded-xl shadow-2xl ring-1 ring-gray-700">
-                <h2 className="text-3xl font-bold text-center mb-8 text-white">Bienvenido de nuevo 👋</h2>
+                <h2 className="text-3xl font-bold text-center mb-8 text-white">Bienvenido de nuevo</h2>
 
                 {error && (
                     <div className="bg-red-900/30 border border-red-500 text-red-200 p-3 rounded mb-4 text-sm text-center">
@@ -40,13 +40,13 @@ export default function Login() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-gray-400 mb-2 text-sm font-medium">Usuario</label>
+                        <label className="block text-gray-400 mb-2 text-sm font-medium">Correo Electrónico</label>
                         <input
-                            type='text'
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            className='w-full p-3 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-btnGreen outline-none transition-all'
-                            placeholder="Tu usuario"
+                            type='email'
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className='w-full p-3 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-btnGreen outline-none transition-all' // Mismas clases
+                            placeholder="ejemplo@correo.com"
                             required
                         />
                     </div>

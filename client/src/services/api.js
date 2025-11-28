@@ -3,28 +3,28 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 const getToken = () => localStorage.getItem('token');
 
 const api = {
-    // Auth
-    register: async (username, password) => {
+    // AUTH
+    register: async (email, password) => {
         const response = await fetch(`${API_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ email, password })
         });
         if (!response.ok) throw new Error('Error al registrarse');
         return response.text(); // Token como string
     },
 
-    login: async (username, password) => {
+    login: async (email, password) => {
         const response = await fetch(`${API_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ email, password })
         });
         if (!response.ok) throw new Error('Error al iniciar sesión. Usuario o contraseña inválidos.');
         return response.text(); // Token como string
     },
 
-    // Products
+    // PRODUCTS
     getProducts: async (filters = {}) => {
         const params = new URLSearchParams();
 
@@ -101,7 +101,7 @@ const api = {
         return response.json(); // Retorna { url: "https://..." }
     },
 
-    // Cart
+    // CART
     getCart: async () => {
         const token = getToken();
         if (!token) return { items: [] };  // ← DEVUELVE VACÍO
@@ -154,6 +154,66 @@ const api = {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!response.ok) throw new Error('Error, el carrito esta vacío');
+        return response.json();
+    },
+
+    // USER PROFILE
+    getProfile: async () => {
+        const token = getToken();
+        if(!token) throw new Error('No hay sesión iniciada');
+
+        const response = await fetch(`${API_URL}/users/me`, {
+            method: 'GET',
+            headers: {'Authorization': `Bearer ${token}`}
+        });
+
+        if (!response.ok) throw new Error('Error al obtener perfil');
+        return response.json();
+    },
+
+    updateProfile: async (data) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/users/me`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) throw new Error("Error al actualizar el perfil");
+        return response.json();
+    },
+
+    updateProfilePicture: async (file) => {
+        const token = getToken();
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch(`${API_URL}/users/me/picture`, {
+            method: 'POST',
+            headers: {'Authorization': `Bearer ${token}`},
+            body: formData
+        });
+        if (!response.ok) throw new Error("Error al subir la foto de perfil");
+        return response.json();
+    },
+
+    changePassword: async (currentPassword, newPassword) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/users/me/password`, {
+            method: 'PUT',
+            headers: { 
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json' 
+            },
+            body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        if (!response.ok) {
+            const err = await response.json().catch(() => ({}));
+            throw new Error(err.message || 'Error al cambiar contraseña');
+        }
         return response.json();
     }
 };

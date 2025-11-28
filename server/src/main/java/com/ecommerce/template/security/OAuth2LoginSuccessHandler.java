@@ -40,20 +40,23 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         // Extraemos datos de Google
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name"); // O "login" si prefieres
+        String picture = oAuth2User.getAttribute("picture"); // Google devuelve la foto en el atributo "picture"
 
         // Buscamos o Creamos el usuario
-        User user = userRepository.findByUsername(email)
+        User user = userRepository.findByEmail(email)
                 .orElseGet(() -> {
                     User newUser = new User();
                     newUser.setUsername(email);
+                    newUser.setEmail(email);
                     newUser.setRole("USER");
                     newUser.setProvider(AuthProvider.GOOGLE);
                     newUser.setPassword(null); // Sin password
+                    newUser.setProfilePictureUrl(picture);
                     return userRepository.save(newUser);
                 });
-
+        
         // Generamos el Token JWT
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+        String token = jwtUtil.generateToken(user.getUsername(), user.getRole(), user.getProfilePictureUrl());
 
         // Redirigimos al Frontend con el token en la URL
         getRedirectStrategy().sendRedirect(request, response, frontendUrl + "/oauth/callback?token=" + token + "&username=" + email);

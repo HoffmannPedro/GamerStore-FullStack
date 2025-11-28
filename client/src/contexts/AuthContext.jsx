@@ -10,36 +10,36 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        const username = localStorage.getItem('username');
-        if (token && username) {
+        if (token) {
             const decoded = parseJwt(token);
-
-            if (decoded.exp * 1000 < Date.now()) {
-                logout();
-            } else {
+            // Verificamos que el token sea válido y no haya expirado
+            if (decoded && decoded.exp * 1000 > Date.now()) {
                 setUser({
                     username: decoded.sub,
-                    role: decoded.role
+                    role: decoded.role,
+                    imageUrl: decoded.imageUrl
                 });
+            } else {
+                logout(); // Si expiró, limpiamos
             }
         }
         setLoading(false);
     }, []);
 
     // LOGIN
-    const login = async (username, password) => {
+    const login = async (email, password) => {
         setLoading(true);
         setError(null);
         try {
-            const token = await api.login(username, password);
+            const token = await api.login(email, password);
             localStorage.setItem('token', token);  // Guardamos el JWT en localStorage
-            localStorage.setItem('username', username);
 
             const decoded = parseJwt(token);
 
             setUser({
                 username: decoded.sub,
-                role: decoded.role
+                role: decoded.role,
+                imageUrl: decoded.imageUrl
             });                 // Estado: Usuario logueado
             setLoading(false);
             return true;
@@ -58,19 +58,24 @@ export const AuthProvider = ({ children }) => {
         if (decoded) {
             setUser({
                 username: decoded.sub,
-                role: decoded.role
+                role: decoded.role,
+                imageUrl: decoded.imageUrl
             });
         }
     };
 
     // REGISTER
-    const register = async (username, password) => {
+    const register = async (email, password) => {
         setLoading(true);
         setError(null);
         try {
-            const token = await api.register(username, password);
+            const token = await api.register(email, password);
             localStorage.setItem('token', token);
-            setUser({ username});
+            const decoded = parseJwt(token);
+            setUser({ 
+                username: decoded.sub,
+                role: decoded.role,
+            });
             setLoading(false);
         } catch (err) {
             setError(err.message);
@@ -80,11 +85,8 @@ export const AuthProvider = ({ children }) => {
 
     // LOGOUT
     const logout = () => {
-        console.log("Cerrando sesión...");
         localStorage.removeItem('token');
-        localStorage.removeItem('username');
         setUser(null);
-        console.log("Sesión cerrada");
         window.location.href = '/login'; 
     };
 

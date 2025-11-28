@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 
 export default function Register() {
     const [formData, setFormData] = useState({
-        username: '',
+        email: '',
         password: '',
         confirmPassword: ''
     });
@@ -33,7 +33,7 @@ export default function Register() {
             return;
         }
 
-        await register(formData.username, formData.password);
+        await register(formData.email, formData.password);
         navigate('/');
     };
 
@@ -43,16 +43,16 @@ export default function Register() {
                 <h2 className="text-3xl font-bold text-center mb-8 text-white">Crear Cuenta</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Usuario */}
+                    {/* Email */}
                     <div>
-                        <label className="block text-gray-400 mb-2 text-sm font-medium">Nombre de Usuario</label>
+                        <label className="block text-gray-400 mb-2 text-sm font-medium">Correo Electrónico</label>
                         <input
-                            type="text"
-                            name="username"
-                            value={formData.username}
+                            type="email"
+                            name="email"
+                            value={formData.email}
                             onChange={handleChange}
                             className="w-full p-3 rounded bg-gray-800 text-white border border-gray-600 focus:ring-2 focus:ring-btnGreen outline-none transition-all"
-                            placeholder="Tu usuario"
+                            placeholder="tu@email.com"
                             required
                         />
                     </div>
@@ -97,8 +97,8 @@ export default function Register() {
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             className={`w-full p-3 rounded bg-gray-800 text-white border outline-none transition-all pr-10 ${formData.confirmPassword && formData.password !== formData.confirmPassword
-                                    ? 'border-red-500 focus:ring-red-500'
-                                    : 'border-gray-600 focus:ring-btnGreen'
+                                ? 'border-red-500 focus:ring-red-500'
+                                : 'border-gray-600 focus:ring-btnGreen'
                                 }`}
                             placeholder="Repite tu contraseña"
                             required
