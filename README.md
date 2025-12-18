@@ -9,7 +9,7 @@
 
 Plataforma de comercio electrónico robusta y escalable diseñada para la venta de hardware gaming. Desarrollada con una arquitectura Full Stack moderna, implementando seguridad JWT, gestión de imágenes en la nube y despliegue continuo.
 
-🔗 **Demo en Vivo:** [https://gamerstore.up.railway.app/](https://gamerstore.up.railway.app/)
+🔗 **Demo en Vivo:** [https://gamer-store-teal.vercel.app/](https://gamer-store-teal.vercel.app/)
 
 ---
 
@@ -17,10 +17,10 @@ Plataforma de comercio electrónico robusta y escalable diseñada para la venta 
 
 Para probar la funcionalidad completa (incluido el Panel de Administración):
 
-| Rol | Usuario | Contraseña | Permisos |
+| Rol | Email | Contraseña | Permisos |
 | :--- | :--- | :--- | :--- |
-| **ADMIN** | `admin` | `1475963` | ABM de Productos, Ver Todo |
-| **USER** | `cliente` | `1234` | Comprar, Ver Carrito |
+| **ADMIN** | `admin@admin.com` | `1475963` | ABM de Productos, Ver Todo |
+| **USER** | `cliente@cliente.com` | `1234` | Comprar, Ver Carrito |
 
 *(Siéntete libre de registrar un nuevo usuario para probar el flujo desde cero)*
 
@@ -85,7 +85,7 @@ GamerStore-FullStack/
 
 ### Infraestructura
 - Docker
-- Railway CI/CD
+- Neon / Render/ Vercel
 
 ### Seguridad
 - JWT (HS512)
