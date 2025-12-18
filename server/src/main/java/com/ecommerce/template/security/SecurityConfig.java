@@ -41,7 +41,8 @@ public class SecurityConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
-                "https://gamerstore.up.railway.app/"));
+                "https://gamerstore.up.railway.app/",
+                "https://gamer-store-teal.vercel.app/"));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
