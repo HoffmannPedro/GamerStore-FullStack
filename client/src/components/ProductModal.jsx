@@ -15,7 +15,7 @@ const ProductModal = ({ product, onClose }) => {
             if (e.key === 'Escape') onClose();
         };
         window.addEventListener('keydown', handleEsc);
-        document.body.style.overflow = 'hidden'; // Bloquear scroll del body
+        document.body.style.overflow = 'hidden';
         return () => {
             window.removeEventListener('keydown', handleEsc);
             document.body.style.overflow = 'unset';
@@ -32,64 +32,64 @@ const ProductModal = ({ product, onClose }) => {
     };
 
     return (
-        <div 
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in" 
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
             onClick={onClose}
         >
-            <div 
-                // max-h-[90vh] y overflow-y-auto aseguran que si el modal es muy alto, puedas scrollear DENTRO del modal en el celular
-                className="bg-terciary w-full max-w-4xl rounded-2xl shadow-2xl ring-1 ring-gray-700 relative flex flex-col md:flex-row animate-scale-up max-h-[90vh] overflow-y-auto md:overflow-visible"
-                onClick={(e) => e.stopPropagation()} 
+            {/* FIX: Quitamos bg-pixel-card y overflow-hidden del padre para evitar doble borde.
+                Ahora cada mitad gestiona sus propias esquinas redondeadas.
+            */}
+            <div
+                className="w-full max-w-4xl relative flex flex-col md:flex-row animate-scale-up max-h-[90vh] overflow-y-auto md:overflow-visible shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
             >
-                <button 
+                {/* Botón Cerrar */}
+                <button
                     onClick={onClose}
-                    className="absolute top-3 right-3 z-20 bg-black/40 p-2 rounded-full text-gray-300 hover:text-white hover:bg-black/60 transition-all backdrop-blur-md"
+                    className="absolute top-3 right-3 z-20 bg-black/40 p-2 rounded-full text-gray-300 hover:text-pixel-bg hover:bg-pixel-teal transition-all backdrop-blur-md"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
-                {/* --- IMAGEN --- */}
-                {/* MÓVIL: h-72 (Altura fija) -> Evita que el modal salte si la imagen es rara.
-                    DESKTOP: md:h-auto (Altura automática) -> Se adapta a la imagen real.
-                    md:min-h-[400px] -> Para que no quede muy bajito en escritorio si la foto es apaisada.
-                */}
-                <div className="w-full md:w-1/2 h-72 md:h-auto md:min-h-[400px] flex items-center justify-center p-6 relative flex-shrink-0">
-                    <img 
-                        src={product.imageUrl} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover drop-shadow-xl"
+                {/* --- IMAGEN (Izquierda/Arriba) --- */}
+                {/* rounded-t-2xl en móvil, rounded-l-2xl en desktop (y quitamos el top-right en desktop) */}
+                <div className="w-full md:w-1/2 bg-pixel-bg flex items-center justify-center p-6 relative flex-shrink-0 rounded-t-2xl md:rounded-tr-none md:rounded-l-2xl border-l border-t border-r md:border-r-0 border-white/10">
+                    <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className="w-full h-auto max-h-[400px] object-contain drop-shadow-2xl"
                         onError={(e) => e.target.src = "/img/placeholder.jpg"}
                     />
-                    
-                    <span className={`absolute bottom-4 left-4 text-xs px-3 py-1 rounded-full font-bold shadow-sm ${
-                        product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+
+                    <span className={`absolute bottom-4 left-4 text-xs px-3 py-1 rounded font-bold shadow-sm backdrop-blur-md border border-white/10 ${product.stock > 0 ? 'bg-pixel-teal/20 text-pixel-teal' : 'bg-red-900/60 text-red-200'
+                        }`}>
                         {product.stock > 0 ? `Stock: ${product.stock}` : 'Agotado'}
                     </span>
                 </div>
 
-                {/* --- INFO --- */}
-                <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
+                {/* --- INFO (Derecha/Abajo) --- */}
+                {/* rounded-b-2xl en móvil, rounded-r-2xl en desktop (y quitamos el bottom-left en desktop) */}
+                <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col bg-pixel-card rounded-b-2xl md:rounded-bl-none md:rounded-r-2xl border-l border-b border-r md:border-l-0 border-white/10">
                     <div className="mb-4">
-                        <span className="text-btnGreen font-bold text-xs tracking-widest uppercase">
-                            {product.categoryName || "Producto"}
+                        <span className="text-pixel-purple font-bold text-xs tracking-[0.2em] uppercase mb-2 block">
+                            {product.categoryName || "Colección"}
                         </span>
-                        <h2 className="text-2xl md:text-3xl font-bold text-white mt-1 leading-tight">
+                        <h2 className="text-3xl font-bold text-white mt-1 leading-tight font-montserrat">
                             {product.name}
                         </h2>
                     </div>
 
-                    <div className="text-gray-300 text-sm md:text-base leading-relaxed mb-6">
+                    <div className="text-pixel-muted text-sm leading-relaxed mb-8 flex-grow">
                         {product.description || "Sin descripción detallada disponible."}
                     </div>
 
-                    <div className="mt-auto pt-6 border-t border-gray-700">
-                        <div className="flex items-end justify-between mb-4">
+                    <div className="mt-auto pt-6 border-t border-white/10">
+                        <div className="flex items-end justify-between mb-6">
                             <div>
-                                <p className="text-gray-400 text-xs uppercase font-semibold">Precio Final</p>
-                                <p className="text-3xl md:text-4xl font-bold text-white font-mono">
+                                <p className="text-gray-400 text-[10px] uppercase font-bold tracking-widest mb-1">Precio Final</p>
+                                <p className="text-4xl font-bold text-pixel-teal font-mono tracking-tighter">
                                     ${product.price.toFixed(2)}
                                 </p>
                             </div>
@@ -98,18 +98,17 @@ const ProductModal = ({ product, onClose }) => {
                         <button
                             onClick={handleAdd}
                             disabled={!isAuthenticated() || product.stock === 0}
-                            className={`w-full py-3.5 px-6 rounded-xl font-bold text-lg transition-all transform active:scale-95 shadow-lg ${
-                                !isAuthenticated() 
-                                    ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                            className={`w-full py-4 px-6 rounded-xl font-bold text-sm uppercase tracking-widest transition-all transform active:scale-95 shadow-lg ${!isAuthenticated()
+                                    ? 'bg-gray-700 text-gray-400 cursor-not-allowed border border-gray-600'
                                     : product.stock === 0
-                                        ? 'bg-red-900/50 text-red-200 cursor-not-allowed border border-red-900'
-                                        : 'bg-btnGreen text-white hover:brightness-110 hover:shadow-green-500/20'
-                            }`}
+                                        ? 'bg-red-900/20 text-red-300 cursor-not-allowed border border-red-900/50'
+                                        : 'bg-pixel-teal text-pixel-bg hover:bg-white hover:shadow-pixel-teal/30'
+                                }`}
                         >
-                            {!isAuthenticated() 
-                                ? '🔒 Iniciá sesión para comprar' 
-                                : product.stock === 0 
-                                    ? '🚫 Sin Stock' 
+                            {!isAuthenticated()
+                                ? '🔒 Inicia sesión para comprar'
+                                : product.stock === 0
+                                    ? '🚫 Sin Stock'
                                     : 'Añadir al Carrito'
                             }
                         </button>

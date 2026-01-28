@@ -6,7 +6,7 @@ import Navbar from './components/Navbar';
 function App() {
 
   return (
-    <div className="min-h-screen w-full bg-dark bg-dots shadow-xl/30 font-montserrat">
+    <div className="min-h-screen w-full bg-dots shadow-xl/30 font-montserrat">
 
       <Toaster position="bottom-right" reverseOrder={false} />
 

@@ -2,6 +2,31 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 const getToken = () => localStorage.getItem('token');
 
+// ✨ LA CLAVE DEL ÉXITO: Esta función lee el JSON de error del backend
+// y lo "pega" al objeto Error de Javascript para que el formulario lo pueda leer.
+const handleResponse = async (response, defaultErrorMessage) => {
+    if (!response.ok) {
+        // Intentamos leer el JSON que viste en la consola (con los errores de stock, etc)
+        const errorData = await response.json().catch(() => ({})); 
+        
+        // Creamos el error
+        const error = new Error(errorData.message || defaultErrorMessage);
+        
+        // ¡IMPORTANTE! Guardamos la respuesta del backend dentro del error
+        error.response = {
+            status: response.status,
+            data: errorData // Aquí viaja: { errors: { stock: "..." } }
+        };
+        
+        throw error; // Lanzamos el error "enriquecido"
+    }
+    
+    // Si no hay contenido (ej: delete exitoso), retornamos null
+    if (response.status === 204) return null;
+    
+    return response.json();
+};
+
 const api = {
     // AUTH
     register: async (email, password) => {
@@ -11,7 +36,7 @@ const api = {
             body: JSON.stringify({ email, password })
         });
         if (!response.ok) throw new Error('Error al registrarse');
-        return response.text(); // Token como string
+        return response.text();
     },
 
     login: async (email, password) => {
@@ -20,32 +45,26 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        if (!response.ok) throw new Error('Error al iniciar sesión. Usuario o contraseña inválidos.');
-        return response.text(); // Token como string
+        if (!response.ok) throw new Error('Usuario o contraseña inválidos.');
+        return response.text();
     },
 
     // PRODUCTS
     getProducts: async (filters = {}) => {
         const params = new URLSearchParams();
-
-        // Mapeamos los filtros del front a los nombres que espera el Controller Java
         if (filters.searchTerm) params.append('name', filters.searchTerm);
         if (filters.categoryId && filters.categoryId !== "Todas") params.append('categoryId', filters.categoryId);
         if (filters.sortOrder && filters.sortOrder !== "default") params.append('sortOrder', filters.sortOrder);
         if (filters.inStock) params.append('inStock', 'true');
         if (filters.active !== undefined) params.append('active', filters.active);
 
-        const response = await fetch(`${API_URL}/products?${params.toString()}`, {
-            method: 'GET'
-        });
-        if (!response.ok) throw new Error('Error al obtener los productos');
-        return response.json();
+        const response = await fetch(`${API_URL}/products?${params.toString()}`, { method: 'GET' });
+        return handleResponse(response, 'Error al obtener productos');
     },
 
     getCategories: async () => {
         const response = await fetch(`${API_URL}/categories`);
-        if (!response.ok) throw new Error('Error al obtener las categorías');
-        return response.json();
+        return handleResponse(response, 'Error al obtener categorías');
     },
 
     createProduct: async (productData) => {
@@ -58,29 +77,22 @@ const api = {
             },
             body: JSON.stringify(productData)
         });
+        // Usamos handleResponse para no perder los errores de validación
+        return handleResponse(response, 'Error al crear el producto');
+    },
 
-        if (!response.ok) {
-            if (response.status === 403) throw new Error('No tienes permisos de Administrador');
-            throw new Error('Error al crear el producto');
-        }
-        return response.json();
-    }
-    ,
     updateProduct: async (id, productData) => {
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_URL}/products/${id}`, {
-            method: 'PUT', // <--- Importante que sea PUT
+            method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(productData)
         });
-        if (!response.ok) {
-            if (response.status === 403) throw new Error('No tienes permisos de Administrador');
-            throw new Error('Error al actualizar el producto');
-        }
-        return response.json();
+        // Usamos handleResponse aquí también
+        return handleResponse(response, 'Error al actualizar el producto');
     },
 
     uploadImage: async (file) => {
@@ -90,31 +102,48 @@ const api = {
 
         const response = await fetch(`${API_URL}/images/upload`, {
             method: 'POST',
-            headers: { 
-                'Authorization': `Bearer ${token}`
-                // OJO: NO poner Content-Type aquí, el navegador lo pone solo con el boundary correcto al usar FormData
-            },
+            headers: { 'Authorization': `Bearer ${token}` },
             body: formData
         });
+        return handleResponse(response, 'Error al subir imagen');
+    },
 
-        if (!response.ok) throw new Error('Error al subir la imagen');
-        return response.json(); // Retorna { url: "https://..." }
+    // CATEGORIES (ADMIN)
+    createCategory: async (categoryData) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/categories`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(categoryData)
+        });
+        return handleResponse(response, 'Error al crear categoría');
+    },
+
+    deleteCategory: async (id) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/categories/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return handleResponse(response, 'Error al eliminar categoría');
     },
 
     // CART
     getCart: async () => {
         const token = getToken();
-        if (!token) return { items: [] };  // ← DEVUELVE VACÍO
+        if (!token) return { items: [] };
         const response = await fetch(`${API_URL}/cart`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Error al obtener el carrito');
-        return response.json();
+        return handleResponse(response, 'Error al obtener carrito');
     },
 
     addItem: async (productId, quantity = 1) => {
         const token = getToken();
-        if (!token) throw new Error('Debes iniciar sesión');  // ← BLOQUEA
+        if (!token) throw new Error('Debes iniciar sesión');
         const response = await fetch(`${API_URL}/cart/items`, {
             method: 'POST',
             headers: {
@@ -123,8 +152,7 @@ const api = {
             },
             body: JSON.stringify({ productId, quantity })
         });
-        if (!response.ok) throw new Error('Error al agregar el item al carrito');
-        return response.json();
+        return handleResponse(response, 'Error al agregar item');
     },
 
     removeOne: async (productId) => {
@@ -133,8 +161,7 @@ const api = {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Error al remover una unidad del item');
-        return response.json();
+        return handleResponse(response, 'Error al reducir cantidad');
     },
 
     removeItem: async (productId) => {
@@ -143,8 +170,7 @@ const api = {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Error al remover el item del carrito');
-        return response.json();
+        return handleResponse(response, 'Error al eliminar item');
     },
 
     clearCart: async () => {
@@ -153,22 +179,92 @@ const api = {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${token}` }
         });
-        if (!response.ok) throw new Error('Error, el carrito esta vacío');
-        return response.json();
+        return handleResponse(response, 'Error al vaciar carrito');
+    },
+
+    // ORDERS
+    createOrder: async (orderData) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+        return handleResponse(response, 'Error al crear orden');
+    },
+
+    getMyOrders: async () => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders/my-orders`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return handleResponse(response, 'Error al obtener historial');
+    },
+
+    getOrderById: async (id) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders/${id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return handleResponse(response, 'Error al obtener orden');
+    },
+
+    createPreference: async (orderId) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders/${orderId}/preference`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await handleResponse(response, 'Error al generar pago');
+        return data.preferenceId;
+    },
+
+    processPayment: async (paymentData) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders/payment/process`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(paymentData)
+        });
+        return handleResponse(response, 'Error al procesar pago');
+    },
+
+    // ADMIN ORDERS
+    getAllOrders: async () => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        return handleResponse(response, 'Error al cargar órdenes');
+    },
+
+    updateOrderStatus: async (id, newStatus) => {
+        const token = getToken();
+        const response = await fetch(`${API_URL}/orders/${id}/status`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ status: newStatus })
+        });
+        return handleResponse(response, 'Error al actualizar estado');
     },
 
     // USER PROFILE
     getProfile: async () => {
         const token = getToken();
-        if(!token) throw new Error('No hay sesión iniciada');
-
+        if (!token) throw new Error('No hay sesión iniciada');
         const response = await fetch(`${API_URL}/users/me`, {
-            method: 'GET',
-            headers: {'Authorization': `Bearer ${token}`}
+            headers: { 'Authorization': `Bearer ${token}` }
         });
-
-        if (!response.ok) throw new Error('Error al obtener perfil');
-        return response.json();
+        return handleResponse(response, 'Error al obtener perfil');
     },
 
     updateProfile: async (data) => {
@@ -181,40 +277,32 @@ const api = {
             },
             body: JSON.stringify(data)
         });
-        if (!response.ok) throw new Error("Error al actualizar el perfil");
-        return response.json();
+        return handleResponse(response, 'Error al actualizar perfil');
     },
 
     updateProfilePicture: async (file) => {
         const token = getToken();
         const formData = new FormData();
         formData.append('file', file);
-
         const response = await fetch(`${API_URL}/users/me/picture`, {
             method: 'POST',
-            headers: {'Authorization': `Bearer ${token}`},
+            headers: { 'Authorization': `Bearer ${token}` },
             body: formData
         });
-        if (!response.ok) throw new Error("Error al subir la foto de perfil");
-        return response.json();
+        return handleResponse(response, 'Error al subir foto');
     },
 
     changePassword: async (currentPassword, newPassword) => {
         const token = getToken();
         const response = await fetch(`${API_URL}/users/me/password`, {
             method: 'PUT',
-            headers: { 
+            headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json'
             },
             body: JSON.stringify({ currentPassword, newPassword })
         });
-
-        if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.message || 'Error al cambiar contraseña');
-        }
-        return response.json();
+        return handleResponse(response, 'Error al cambiar contraseña');
     }
 };
 
