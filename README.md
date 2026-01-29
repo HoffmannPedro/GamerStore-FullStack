@@ -95,7 +95,6 @@ Para probar la funcionalidad completa (incluido el Panel de Administración):
 | Variable | Descripción |
 | :--- | :--- |
 | `SPRING_DATASOURCE_URL` | URL JDBC (jdbc:postgresql://host:port/db) |
-| `SPRING_DATASOURCE_URL` | URL JDBC (jdbc:postgresql://host:port/db) |
 | `SPRING_DATASOURCE_USERNAME` | Usuario de la BD |
 | `SPRING_DATASOURCE_PASSWORD` | Contraseña de la BD |
 | `JWT_SECRET` | Clave secreta para firmar tokens (mínimo 64 chars) |
